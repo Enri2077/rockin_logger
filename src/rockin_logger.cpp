@@ -27,7 +27,6 @@ using namespace std;
 #define ROCKIN_IMAGE		"/rockin/image"
 #define ROCKIN_POINTCLOUD	"/rockin/pointcloud"
 #define ROCKIN_COMMAND		"/rockin/command"
-#define ROCKIN_AUDIO		"/rockin/audio"
 
 
 
