@@ -1,9 +1,8 @@
 #!/bin/bash
 
-TEAMNAME="sapienzbot"
+TEAMNAME="lurch"
 
-BENCHMARK="TBMH1"
-# {TBM|FBM}{H|W}{1..3}
+BENCHMARK="TBMH1" # {TBM|FBM}{H|W}{1..3}
 
 if [ -n "$1" ]; then
   TEAMNAME="$1"

@@ -1,5 +1,5 @@
 <launch>
-  <arg name="robot_name" default="sapienzbot" />
+  <arg name="robot_name" default="lurch" />
 
   <node pkg="rockin_logger" name="rockin_logger" type="rockin_logger" output="screen"> 
     <param name="pcd_file" value="$(find rockin_logger)/data/example.pcd" /> 
@@ -12,11 +12,16 @@
     <remap from="audio" to="/rockin/audio"/>
   </node-->
   
+  <!--
   <node pkg="tf" type="static_transform_publisher" name="base_static_transform" args="0 0 0 0 0 0 /$(arg robot_name)/base_frame /base_frame 10" />
   <node pkg="tf" type="static_transform_publisher" name="laser_static_transform" args="0 0 0 0 0 0 /$(arg robot_name)/laser_frame /laser_frame 10" />
   <node pkg="tf" type="static_transform_publisher" name="camera_static_transform" args="0 0 1 0 0 0 /base_frame /rgb_frame 10" />
   <node pkg="tf" type="static_transform_publisher" name="depth_static_transform" args="0.1 0 1 0 0 0 /base_frame /depth_frame 10" />
-    
-    
+    -->
+
+  
+  <node pkg="tf" type="static_transform_publisher" name="base_static_transform" args="0 0 0 0 0 0 /roamfree /$(arg robot_name)/roamfree 10" />
+  <node pkg="tf" type="static_transform_publisher" name="laser_static_transform" args="0 0 0 0 0 0 /right_hokuyo_link /$(arg robot_name)/laser_frame 10" />
+  
 </launch>
 

@@ -73,7 +73,7 @@ struct TLogger {
   TLogger() {
     listener=NULL;
     
-    image_file = "default.png"; pcd_file = "default.pcd"; robot_name = "";
+    image_file = "default.png"; pcd_file = "default.pcd"; robot_name = "lurch";
   }
   
   void init(ros::NodeHandle &n) {
@@ -125,8 +125,8 @@ struct TLogger {
     base_frame = BASE_FRAME;
     map_frame = MAP_FRAME;
     if (robot_name!="") {
-      scan_left_topic = "/" + robot_name + SCAN_LEFT_TOPIC;
-      scan_right_topic = "/" + robot_name + SCAN_RIGHT_TOPIC;
+      //scan_left_topic = "/" + robot_name + SCAN_LEFT_TOPIC;
+      //scan_right_topic = "/" + robot_name + SCAN_RIGHT_TOPIC;
       base_frame = "/" + robot_name + BASE_FRAME;
     }      
  
