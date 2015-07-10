@@ -6,7 +6,9 @@ project(rockin_logger)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs nav_msgs roscpp sensor_msgs std_msgs tf
-  cv_bridge image_transport audio_common_msgs)
+  cv_bridge image_transport
+  audio_common_msgs
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -96,6 +98,9 @@ catkin_package(
 
 include_directories(${PCL_INCLUDE_DIRS})
 
+## Enrico Piazza: tryed adding these two lines to solve pcl_convertions... didn't work
+#link_directories(${PCL_LIBRARY_DIRS})
+#add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a cpp library
 # add_library(rockin_logger

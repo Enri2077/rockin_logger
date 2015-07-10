@@ -23,17 +23,19 @@ using namespace std;
 
 
 // robot topics
-#define SCAN_TOPIC "/scan"
+#define SCAN_LEFT_TOPIC "/scan_left"
+#define SCAN_RIGHT_TOPIC "/scan_right"
 
 // robot frames
 #define MAP_FRAME  "/map"
-#define BASE_FRAME  "/base_frame"
+#define BASE_FRAME  "/roamfree"
 
 
 // output RoCKIn log topics
 #define ROCKIN_ROBOTPOSE "/rockin/robot_pose"
 #define ROCKIN_MARKERPOSE "/rockin/marker_pose"
-#define ROCKIN_SCAN "/rockin/scan"
+#define ROCKIN_SCAN_LEFT "/rockin/scan_0"
+#define ROCKIN_SCAN_RIGHT "/rockin/scan_1"
 #define ROCKIN_IMAGE "/rockin/image"
 #define ROCKIN_POINTCLOUD "/rockin/pointcloud"
 #define ROCKIN_COMMAND "/rockin/command"
@@ -41,7 +43,8 @@ using namespace std;
 
 
 
-void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
+void laserLeftCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
+void laserRightCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
 void loggerTimerCallback(const ros::TimerEvent& msg);
 void imageTimerCallback(const ros::TimerEvent& msg);
 void commandTimerCallback(const ros::TimerEvent& msg);
@@ -50,16 +53,16 @@ struct TLogger {
   tf::TransformListener* listener;
   image_transport::ImageTransport *imagetr;
   string image_file, pcd_file, robot_name;
-  sensor_msgs::LaserScan scan_msg;
+  sensor_msgs::LaserScan scan_left_msg, scan_right_msg;
   cv::Mat image;
   pcl::PCLPointCloud2 pointcloud;
   sensor_msgs::PointCloud2 pointcloud_msg;
   // audio_common_msgs::AudioData audio_msg;
   
-  string map_frame, base_frame, scan_topic;
+  string map_frame, base_frame, scan_left_topic, scan_right_topic;
   
-  ros::Subscriber laserSub;
-  ros::Publisher rposePub,mposePub,scanPub,commandPub,pointcloudPub,audioPub;
+  ros::Subscriber laserLeftSub, laserRightSub;
+  ros::Publisher rposePub, mposePub, scanLeftPub, scanRightPub, commandPub, pointcloudPub, audioPub;
   image_transport::Publisher imagePub; 
 
   ros::Timer logger_timer, image_timer, command_timer;
@@ -84,20 +87,22 @@ struct TLogger {
     listener = new tf::TransformListener();
     imagetr = new image_transport::ImageTransport(n);
     
-    laserSub = n.subscribe(scan_topic, 10, laserCallback);
+    laserLeftSub = n.subscribe(scan_left_topic, 10, laserLeftCallback);
+    laserRightSub = n.subscribe(scan_right_topic, 10, laserRightCallback);
 
     rposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_ROBOTPOSE, 10);
     mposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_MARKERPOSE, 10);
-    scanPub = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN, 10);
+    scanLeftPub = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_LEFT, 10);
+    scanRightPub = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_RIGHT, 10);
     imagePub = imagetr->advertise(ROCKIN_IMAGE, 1);
     commandPub = n.advertise<std_msgs::String>(ROCKIN_COMMAND, 1);
     pointcloudPub = n.advertise<pcl::PCLPointCloud2> (ROCKIN_POINTCLOUD, 1);
     // audio_capture node is used to capture audio
     //audioPub = n.advertise<audio_common_msgs::AudioData>(ROCKIN_AUDIO, 1);
     
-    logger_timer = n.createTimer(ros::Duration(0.1), loggerTimerCallback);  // 10 Hz    
-    image_timer = n.createTimer(ros::Duration(5.0), imageTimerCallback);    // 1/5 Hz 
-    command_timer = n.createTimer(ros::Duration(7.0), commandTimerCallback);    // 1/7 Hz 
+    logger_timer = n.createTimer(ros::Duration(0.1), loggerTimerCallback);  // 10 Hz
+    image_timer = n.createTimer(ros::Duration(5.0), imageTimerCallback);    // 1/5 Hz
+    command_timer = n.createTimer(ros::Duration(7.0), commandTimerCallback);    // 1/7 Hz
     
     loadData();
     
@@ -114,12 +119,14 @@ struct TLogger {
     pointcloud.header.frame_id = base_frame; // In general it should be in camera frame
   }
   
-  void  setTopicAndFrameNames() {   
-    scan_topic = SCAN_TOPIC;
+  void  setTopicAndFrameNames() {
+    scan_left_topic = SCAN_LEFT_TOPIC;
+    scan_right_topic = SCAN_RIGHT_TOPIC;
     base_frame = BASE_FRAME;
     map_frame = MAP_FRAME;
     if (robot_name!="") {
-      scan_topic = "/" + robot_name + SCAN_TOPIC;
+      scan_left_topic = "/" + robot_name + SCAN_LEFT_TOPIC;
+      scan_right_topic = "/" + robot_name + SCAN_RIGHT_TOPIC;
       base_frame = "/" + robot_name + BASE_FRAME;
     }      
  
@@ -129,9 +136,14 @@ struct TLogger {
 
 static TLogger logger;
 
-void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
+void laserLeftCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
-  logger.scan_msg = *msg;
+  logger.scan_left_msg = *msg;
+}
+
+void laserRightCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+  logger.scan_right_msg = *msg;
 }
 
 
@@ -158,11 +170,12 @@ bool getRobotPose(double &x, double &y, double &th_rad)
 
 
 // Data logger
-void loggerTimerCallback(const ros::TimerEvent& msg) 
+void loggerTimerCallback(const ros::TimerEvent& msg)
 {
-  // ROS_INFO("Publishing info..."); 
+  // ROS_INFO("Publishing info...");
   logger.now = ros::Time::now();
-  double x,y,th_rad; geometry_msgs::PoseStamped rpose,mpose;
+  double x,y,th_rad;
+  geometry_msgs::PoseStamped rpose,mpose;
 
   bool r = getRobotPose(x, y, th_rad);
   if (r) {
@@ -170,19 +183,20 @@ void loggerTimerCallback(const ros::TimerEvent& msg)
     rpose.header.frame_id = MAP_FRAME;
     rpose.pose.position.x = x; rpose.pose.position.y = y; rpose.pose.position.z = 0;
     tf::Quaternion q; q.setRPY(0, 0, th_rad);    
-    tf::quaternionTFToMsg(q, rpose.pose.orientation); 
+    tf::quaternionTFToMsg(q, rpose.pose.orientation);
     logger.rposePub.publish(rpose);
     mpose = rpose; mpose.pose.position.z += 1.0;
-    q.setRPY(0.3, -0.7, th_rad);    
-    tf::quaternionTFToMsg(q, mpose.pose.orientation);    
+    q.setRPY(0.3, -0.7, th_rad);
+    tf::quaternionTFToMsg(q, mpose.pose.orientation);
     logger.mposePub.publish(mpose);
   }
-  logger.scanPub.publish(logger.scan_msg);
+  logger.scanLeftPub.publish(logger.scan_left_msg);
+  logger.scanRightPub.publish(logger.scan_right_msg);
 
 }
 
 // Image logger
-void imageTimerCallback(const ros::TimerEvent& msg) 
+void imageTimerCallback(const ros::TimerEvent& msg)
 {
   sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", logger.image).toImageMsg();
   image_msg->header.stamp = logger.now;
@@ -193,7 +207,7 @@ void imageTimerCallback(const ros::TimerEvent& msg)
 }
 
 // Command logger
-void commandTimerCallback(const ros::TimerEvent& msg) 
+void commandTimerCallback(const ros::TimerEvent& msg)
 {
   std_msgs::String s_msg; s_msg.data = "go to the kitchen";
   logger.commandPub.publish(s_msg);
