@@ -98,10 +98,6 @@ catkin_package(
 
 include_directories(${PCL_INCLUDE_DIRS})
 
-## Enrico Piazza: tryed adding these two lines to solve pcl_convertions... didn't work
-#link_directories(${PCL_LIBRARY_DIRS})
-#add_definitions(${PCL_DEFINITIONS})
-
 ## Declare a cpp library
 # add_library(rockin_logger
 #   src/${PROJECT_NAME}/rockin_logger.cpp

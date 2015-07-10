@@ -1,27 +1,43 @@
 <launch>
-  <arg name="robot_name" default="lurch" />
-
-  <node pkg="rockin_logger" name="rockin_logger" type="rockin_logger" output="screen"> 
-    <param name="pcd_file" value="$(find rockin_logger)/data/example.pcd" /> 
-    <param name="image_file" value="$(find rockin_logger)/data/example.png" />
-    <param name="robot_name" value="$(arg robot_name)" />
-  </node>
-
-  <!--node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
-    <param name="bitrate" value="128"/>
-    <remap from="audio" to="/rockin/audio"/>
-  </node-->
-  
-  <!--
-  <node pkg="tf" type="static_transform_publisher" name="base_static_transform" args="0 0 0 0 0 0 /$(arg robot_name)/base_frame /base_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="laser_static_transform" args="0 0 0 0 0 0 /$(arg robot_name)/laser_frame /laser_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="camera_static_transform" args="0 0 1 0 0 0 /base_frame /rgb_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="depth_static_transform" args="0.1 0 1 0 0 0 /base_frame /depth_frame 10" />
-    -->
-
-  
-  <node pkg="tf" type="static_transform_publisher" name="base_static_transform" args="0 0 0 0 0 0 /roamfree /$(arg robot_name)/roamfree 10" />
-  <node pkg="tf" type="static_transform_publisher" name="laser_static_transform" args="0 0 0 0 0 0 /right_hokuyo_link /$(arg robot_name)/laser_frame 10" />
-  
+	<!-- BEGIN - CONFIGURE THE LOGGER BY FILLING THE VALUES OF YOUR ROBOT HERE -->
+	<arg name="team_name" 		default="PUT_HERE_YOUR_TEAM_NAME" />
+	
+	<!-- BEGIN - TO BE REPLICATED FOR EACH LASER  -->
+	<arg name="scan_topic_0"	default="PUT_HERE_FULL_TOPIC_NAME" />
+	<arg name="laser_frame_0"	default="PUT_HERE_LASER_FRAME_NAME" />
+	<!-- END - TO BE REPLICATED FOR EACH LASER  -->
+	
+	<arg name="map_frame"		default="PUT_HERE_MAP_FRAME_NAME" />
+	<arg name="base_frame"		default="PUT_HERE_BASE_FRAME_NAME" />
+	
+	<arg name="pcd_file" 		default="$(find rockin_logger)/data/PUT_HERE_PCD_FILE_NAME.pcd" />
+	<arg name="image_file" 		default="$(find rockin_logger)/data/PUT_HERE_IMAGE_FILE_NAME.png" />
+	<!-- END - CONFIGURE THE LOGGER BY FILLING THE VALUES OF YOUR ROBOT HERE -->
+	
+	
+	<node pkg="rockin_logger" name="rockin_logger" type="rockin_logger" output="screen">
+		<param name="pcd_file"		value="$(arg pcd_file)" />
+		<param name="image_file"	value="$(arg image_file)" />
+		
+		<param name="robot_name"	value="$(arg robot_name)" />
+		<param name="scan_topic_0"	value="$(arg scan_topic_0)" />
+		<param name="map_frame"		value="$(arg map_frame)" />
+		<param name="base_frame"	value="$(arg base_frame)" />
+	</node>
+	
+	<node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
+		<param name="bitrate" value="128"/>
+		<remap from="audio" to="/rockin/audio"/>
+	</node>
+	
+	<node	pkg="tf" type="static_transform_publisher"
+			name="base_static_transform"
+			args="0 0 0 0 0 0 /$(arg base_frame) /$(arg team_name)/base_frame 10" />
+	
+	<!-- TO BE REPLICATED FOR EACH LASER  -->
+	<node	pkg="tf" type="static_transform_publisher"
+			name="laser_static_transform"
+			args="0 0 0 0 0 0 /$(arg laser_frame_0) /$(arg team_name)/laser_frame_0 10" />
+	
 </launch>
 

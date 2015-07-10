@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TEAMNAME="lurch"
+TEAMNAME="PUT_HERE_YOUR_TEAM_NAME"
 
-BENCHMARK="TBMH1" # {TBM|FBM}{H|W}{1..3}
+BENCHMARK="TBMH1"	# {TBM|FBM}{H|W}{1..3}
 
 if [ -n "$1" ]; then
   TEAMNAME="$1"
@@ -16,6 +16,6 @@ DATE=`date +%Y%m%d%k%M`
 
 xterm -e "roslaunch rockin_logger rockin_logger.launch" &
 
-rosbag record /tf /rockin/robot_pose /rockin/marker_pose /rockin/scan_0 /rockin/scan_1 /rockin/image \
+rosbag record /tf /rockin/robot_pose /rockin/marker_pose /rockin/scan_0 /rockin/image \
               /rockin/image /rockin/pointcloud /rockin/audio /rockin/command \
               -O "${BENCHMARK}_${DATE}_${TEAMNAME}.bag" 
