@@ -1,0 +1,26 @@
+<launch>
+
+    <arg name="map_name" default="peccioli@Home" />
+    <arg name="bag_file" default="nobag" />
+
+    <!-- Global Parameters -->
+    <param name="/use_sim_time" value="true"/>
+
+    <!-- Run the map server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find rockin_logger)/maps/$(arg map_name).yaml" />
+    <!--node name="map_server" pkg="map_server" type="map_server" args="$(find rockin_logger)/maps/$(arg map_name).yaml _frame_id:=world"/-->
+
+    <!--- Run the rosbag with the pose -->
+    <node pkg="rosbag" type="play" name="player" args="--clock $(find rockin_logger)/bags/$(arg bag_file)" output="screen" />
+
+    <node name="audio_play" pkg="audio_play" type="audio_play" output="screen">
+      <param name="dst" value="alsasink"/>
+      <remap from="audio" to="/rockin/audio"/>
+    </node>
+  
+    <!-- Start rziz -->
+    <arg name="rviz_config" value="$(find rockin_logger)/rviz/rockin_logger.rviz" />
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)"/>
+
+</launch> 
+
