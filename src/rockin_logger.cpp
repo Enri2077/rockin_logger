@@ -15,7 +15,7 @@
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include <pcl_conversions/pcl_conversions.h>
+// #include <pcl_conversions/pcl_conversions.h> // Enrico: I commented this line because pcl_conversions.h is not available in groovy
 
 using namespace std;
 
@@ -55,8 +55,8 @@ struct TLogger {
   string image_file, pcd_file, robot_name;
   sensor_msgs::LaserScan scan_left_msg, scan_right_msg;
   cv::Mat image;
-  pcl::PCLPointCloud2 pointcloud;
-  sensor_msgs::PointCloud2 pointcloud_msg;
+  // pcl::PCLPointCloud2 pointcloud; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+  // sensor_msgs::PointCloud2 pointcloud_msg; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
   // audio_common_msgs::AudioData audio_msg;
   
   string map_frame, base_frame, scan_left_topic, scan_right_topic;
@@ -96,7 +96,7 @@ struct TLogger {
     scanRightPub = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_RIGHT, 10);
     imagePub = imagetr->advertise(ROCKIN_IMAGE, 1);
     commandPub = n.advertise<std_msgs::String>(ROCKIN_COMMAND, 1);
-    pointcloudPub = n.advertise<pcl::PCLPointCloud2> (ROCKIN_POINTCLOUD, 1);
+    // pointcloudPub = n.advertise<pcl::PCLPointCloud2> (ROCKIN_POINTCLOUD, 1); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
     // audio_capture node is used to capture audio
     //audioPub = n.advertise<audio_common_msgs::AudioData>(ROCKIN_AUDIO, 1);
     
@@ -115,8 +115,8 @@ struct TLogger {
     cv::circle(image, cv::Point(120, 160), 80, CV_RGB(0,0,255)); */
     image = cv::imread(image_file, CV_LOAD_IMAGE_COLOR);
     
-    pcl::io::loadPCDFile (pcd_file, pointcloud);
-    pointcloud.header.frame_id = base_frame; // In general it should be in camera frame
+    // pcl::io::loadPCDFile (pcd_file, pointcloud); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+    // pointcloud.header.frame_id = base_frame; // In general it should be in camera frame  // Enrico: I commented this line because pcl_conversions.h is not available in groovy
   }
   
   void  setTopicAndFrameNames() {
@@ -202,8 +202,9 @@ void imageTimerCallback(const ros::TimerEvent& msg)
   image_msg->header.stamp = logger.now;
   logger.imagePub.publish(image_msg);
   
-  logger.pointcloud.header.stamp =  pcl_conversions::toPCL(logger.now);
-  logger.pointcloudPub.publish(logger.pointcloud);
+  
+  // logger.pointcloud.header.stamp =  pcl_conversions::toPCL(logger.now); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+  // logger.pointcloudPub.publish(logger.pointcloud); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
 }
 
 // Command logger
