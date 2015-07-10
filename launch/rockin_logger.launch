@@ -1,17 +1,17 @@
 <launch>
 	<!-- BEGIN - CONFIGURE THE LOGGER BY FILLING THE VALUES OF YOUR ROBOT HERE -->
-	<arg name="team_name" 		default="PUT_HERE_YOUR_TEAM_NAME" />
+	<arg name="team_name" 		default="adams" />
 	
 	<!-- BEGIN - TO BE REPLICATED FOR EACH LASER  -->
-	<arg name="scan_topic_0"	default="PUT_HERE_FULL_TOPIC_NAME" />
-	<arg name="laser_frame_0"	default="PUT_HERE_LASER_FRAME_NAME" />
+	<arg name="scan_topic_0"	default="/scan_left" />
+	<arg name="laser_frame_0"	default="/left_hokuyo_link" />
 	<!-- END - TO BE REPLICATED FOR EACH LASER  -->
 	
-	<arg name="map_frame"		default="PUT_HERE_MAP_FRAME_NAME" />
-	<arg name="base_frame"		default="PUT_HERE_BASE_FRAME_NAME" />
+	<arg name="map_frame"		default="/map" />
+	<arg name="base_frame"		default="/roamfree" />
 	
-	<arg name="pcd_file" 		default="$(find rockin_logger)/data/PUT_HERE_PCD_FILE_NAME.pcd" />
-	<arg name="image_file" 		default="$(find rockin_logger)/data/PUT_HERE_IMAGE_FILE_NAME.png" />
+	<arg name="pcd_file" 		default="$(find rockin_logger)/data/example.pcd" />
+	<arg name="image_file" 		default="$(find rockin_logger)/data/example.png" />
 	<!-- END - CONFIGURE THE LOGGER BY FILLING THE VALUES OF YOUR ROBOT HERE -->
 	
 	
@@ -33,7 +33,7 @@
 	<node	pkg="tf" type="static_transform_publisher"
 			name="base_static_transform"
 			args="0 0 0 0 0 0 /$(arg base_frame) /$(arg team_name)/base_frame 10" />
-	
+			
 	<!-- TO BE REPLICATED FOR EACH LASER  -->
 	<node	pkg="tf" type="static_transform_publisher"
 			name="laser_static_transform"

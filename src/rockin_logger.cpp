@@ -43,7 +43,7 @@ struct TLogger{
 
 	// pcl::PCLPointCloud2 pointcloud; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
 	// sensor_msgs::PointCloud2 pointcloud_msg; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
-	
+
 	/**	Parameters provided by launch file,
 	  *	the only customization here should be the replication for the topics 
 	  *	(i.e. when you need to publish 2 scan topics: scan_topic_0 and scan_topic_1)
