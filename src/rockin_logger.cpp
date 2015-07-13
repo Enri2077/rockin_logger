@@ -21,13 +21,13 @@ using namespace std;
 #define NODE_NAME			"rockin_logger"
 
 // output RoCKIn log topics
-#define ROCKIN_ROBOTPOSE	"/rockin/robot_pose"
-#define ROCKIN_MARKERPOSE	"/rockin/marker_pose"
-#define ROCKIN_SCAN_0		"/rockin/scan_0"		// TO BE REPLICATED
-#define ROCKIN_SCAN_1		"/rockin/scan_1"		// TO BE REPLICATED
-#define ROCKIN_IMAGE		"/rockin/image"
-#define ROCKIN_POINTCLOUD	"/rockin/pointcloud"
-#define ROCKIN_COMMAND		"/rockin/command"
+#define ROCKIN_ROBOTPOSE	"/robot_pose"
+#define ROCKIN_MARKERPOSE	"/marker_pose"
+#define ROCKIN_SCAN_0		"/scan_0"		// TO BE REPLICATED
+#define ROCKIN_SCAN_1		"/scan_1"		// TO BE REPLICATED
+#define ROCKIN_IMAGE		"/image"
+#define ROCKIN_POINTCLOUD	"/pointcloud"
+#define ROCKIN_COMMAND		"/command"
 
 
 
@@ -50,7 +50,7 @@ struct TLogger{
 	  *	the only customization here should be the replication for the topics 
 	  *	(i.e. when you need to publish 2 scan topics: scan_topic_0 and scan_topic_1)
 	**/
-	string image_file, pcd_file, team_name, map_frame, base_frame;
+	string image_file, pcd_file, team_name, map_frame, base_frame, topic_prefix;
 	string scan_topic_0;				// TO BE REPLICATED
 	string scan_topic_1;				// TO BE REPLICATED
 	
@@ -85,13 +85,13 @@ struct TLogger{
 		laserSub0 = n.subscribe(scan_topic_0, 10, laserCallback0);			// TO BE REPLICATED
 		laserSub1 = n.subscribe(scan_topic_1, 10, laserCallback1);			// TO BE REPLICATED
 
-		scanPub0 = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_0, 10);	// TO BE REPLICATED
-		scanPub1 = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_1, 10);	// TO BE REPLICATED
-		rposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_ROBOTPOSE, 10);
-		mposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_MARKERPOSE, 10);
-		imagePub = imagetr->advertise(ROCKIN_IMAGE, 1);
-		commandPub = n.advertise<std_msgs::String>(ROCKIN_COMMAND, 1);
-		// pointcloudPub = n.advertise<pcl::PCLPointCloud2> (ROCKIN_POINTCLOUD, 1); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+		scanPub0 = n.advertise<sensor_msgs::LaserScan>(topic_prefix+ROCKIN_SCAN_0, 10);	// TO BE REPLICATED
+		scanPub1 = n.advertise<sensor_msgs::LaserScan>(topic_prefix+ROCKIN_SCAN_1, 10);	// TO BE REPLICATED
+		rposePub = n.advertise<geometry_msgs::PoseStamped>(topic_prefix+ROCKIN_ROBOTPOSE, 10);
+		mposePub = n.advertise<geometry_msgs::PoseStamped>(topic_prefix+ROCKIN_MARKERPOSE, 10);
+		imagePub = imagetr->advertise(topic_prefix+ROCKIN_IMAGE, 1);
+		commandPub = n.advertise<std_msgs::String>(topic_prefix+ROCKIN_COMMAND, 1);
+		// pointcloudPub = n.advertise<pcl::PCLPointCloud2> (topic_prefix+ROCKIN_POINTCLOUD, 1); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
 		
 		logger_timer = n.createTimer(ros::Duration(0.1), loggerTimerCallback);  // 10 Hz
 		image_timer = n.createTimer(ros::Duration(5.0), imageTimerCallback);    // 1/5 Hz
@@ -198,9 +198,10 @@ int main(int argc, char **argv){
 	np.getParam("scan_topic_0",	logger.scan_topic_0);		// TO BE REPLICATED
 	np.getParam("scan_topic_1",	logger.scan_topic_1);		// TO BE REPLICATED
 	np.getParam("map_frame",	logger.map_frame);
-	
 	np.getParam("base_frame",	logger.base_frame);
 	//if (logger.team_name!="")	logger.base_frame = "/"+logger.team_name+logger.base_frame;
+	
+	logger.topic_prefix = "/rockin/" + logger.team_name;
 	
 	logger.init(n);
 	ros::spin();
