@@ -24,6 +24,7 @@ using namespace std;
 #define ROCKIN_ROBOTPOSE	"/rockin/robot_pose"
 #define ROCKIN_MARKERPOSE	"/rockin/marker_pose"
 #define ROCKIN_SCAN_0		"/rockin/scan_0"		// TO BE REPLICATED
+#define ROCKIN_SCAN_1		"/rockin/scan_1"		// TO BE REPLICATED
 #define ROCKIN_IMAGE		"/rockin/image"
 #define ROCKIN_POINTCLOUD	"/rockin/pointcloud"
 #define ROCKIN_COMMAND		"/rockin/command"
@@ -31,6 +32,7 @@ using namespace std;
 
 
 void laserCallback0(const sensor_msgs::LaserScan::ConstPtr& msg);	// TO BE REPLICATED
+void laserCallback1(const sensor_msgs::LaserScan::ConstPtr& msg);	// TO BE REPLICATED
 
 void loggerTimerCallback(const ros::TimerEvent& msg);
 void imageTimerCallback(const ros::TimerEvent& msg);
@@ -50,11 +52,16 @@ struct TLogger{
 	**/
 	string image_file, pcd_file, team_name, map_frame, base_frame;
 	string scan_topic_0;				// TO BE REPLICATED
+	string scan_topic_1;				// TO BE REPLICATED
 	
 	sensor_msgs::LaserScan scan_msg_0;	// TO BE REPLICATED
 	ros::Subscriber laserSub0;			// TO BE REPLICATED
 	
+	sensor_msgs::LaserScan scan_msg_1;	// TO BE REPLICATED
+	ros::Subscriber laserSub1;			// TO BE REPLICATED
+	
 	ros::Publisher scanPub0;			// TO BE REPLICATED
+	ros::Publisher scanPub1;			// TO BE REPLICATED
 	ros::Publisher rposePub, mposePub, commandPub, pointcloudPub, audioPub;
 	image_transport::Publisher imagePub;
 	
@@ -76,8 +83,10 @@ struct TLogger{
 		imagetr = new image_transport::ImageTransport(n);
 
 		laserSub0 = n.subscribe(scan_topic_0, 10, laserCallback0);			// TO BE REPLICATED
+		laserSub1 = n.subscribe(scan_topic_1, 10, laserCallback1);			// TO BE REPLICATED
 
 		scanPub0 = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_0, 10);	// TO BE REPLICATED
+		scanPub1 = n.advertise<sensor_msgs::LaserScan>(ROCKIN_SCAN_1, 10);	// TO BE REPLICATED
 		rposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_ROBOTPOSE, 10);
 		mposePub = n.advertise<geometry_msgs::PoseStamped>(ROCKIN_MARKERPOSE, 10);
 		imagePub = imagetr->advertise(ROCKIN_IMAGE, 1);
@@ -108,6 +117,9 @@ static TLogger logger;
 
 void laserCallback0(const sensor_msgs::LaserScan::ConstPtr& msg){	// TO BE REPLICATED
 	logger.scan_msg_0 = *msg;
+}
+void laserCallback1(const sensor_msgs::LaserScan::ConstPtr& msg){	// TO BE REPLICATED
+	logger.scan_msg_1 = *msg;
 }
 
 
@@ -154,6 +166,7 @@ void loggerTimerCallback(const ros::TimerEvent& msg){
 	}
 	
 	logger.scanPub0.publish(logger.scan_msg_0);		// TO BE REPLICATED
+	logger.scanPub1.publish(logger.scan_msg_1);		// TO BE REPLICATED
 }
 
 // Image logger
@@ -183,6 +196,7 @@ int main(int argc, char **argv){
 	np.getParam("image_file",	logger.image_file);
 	np.getParam("pcd_file",		logger.pcd_file);
 	np.getParam("scan_topic_0",	logger.scan_topic_0);		// TO BE REPLICATED
+	np.getParam("scan_topic_1",	logger.scan_topic_1);		// TO BE REPLICATED
 	np.getParam("map_frame",	logger.map_frame);
 	
 	np.getParam("base_frame",	logger.base_frame);
