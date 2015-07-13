@@ -32,12 +32,12 @@
 	
 	<node	pkg="tf" type="static_transform_publisher"
 			name="base_static_transform"
-			args="0 0 0 0 0 0 /$(arg base_frame) /$(arg team_name)/base_frame 10" />
+			args="0 0 0 0 0 0 $(arg base_frame) /$(arg team_name)/base_frame 10" />
 			
 	<!-- TO BE REPLICATED FOR EACH LASER  -->
 	<node	pkg="tf" type="static_transform_publisher"
 			name="laser_static_transform"
-			args="0 0 0 0 0 0 /$(arg laser_frame_0) /$(arg team_name)/laser_frame_0 10" />
+			args="0 0 0 0 0 0 $(arg laser_frame_0) /$(arg team_name)/laser_frame_0 10" />
 	
 </launch>
 

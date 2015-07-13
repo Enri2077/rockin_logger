@@ -186,7 +186,7 @@ int main(int argc, char **argv){
 	np.getParam("map_frame",	logger.map_frame);
 	
 	np.getParam("base_frame",	logger.base_frame);
-	if (logger.team_name!="")	logger.base_frame = "/"+logger.team_name+logger.base_frame;
+	//if (logger.team_name!="")	logger.base_frame = "/"+logger.team_name+logger.base_frame;
 	
 	logger.init(n);
 	ros::spin();
