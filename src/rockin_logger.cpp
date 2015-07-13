@@ -65,6 +65,8 @@ struct TLogger{
 	ros::Publisher rposePub, mposePub, commandPub, pointcloudPub, audioPub;
 	image_transport::Publisher imagePub;
 	
+	double translation_x, translation_y, translation_z;
+	
 	ros::Timer logger_timer, image_timer, command_timer;
 	
 	ros::Time now;
@@ -169,10 +171,10 @@ void loggerTimerCallback(const ros::TimerEvent& msg){
 		
 		// marker position and orientation
 		mpose = rpose;
-		mpose.pose.position.x += 0.575;
-		mpose.pose.position.y += 0.221;
-		mpose.pose.position.z += 0.984;
-		q.setRPY(0, 0, th_rad);				// the marker's direction is the same as the robot
+		mpose.pose.position.x += logger.translation_x;
+		mpose.pose.position.y += logger.translation_y;
+		mpose.pose.position.z += logger.translation_z;
+		q.setRPY(0, 0, th_rad);								// the marker's direction is the same as the robot
 		
 		// publish marker pose
 		tf::quaternionTFToMsg(q, mpose.pose.orientation);
@@ -205,15 +207,21 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, NODE_NAME);
 	ros::NodeHandle n, np("~");
 	
-	np.getParam("team_name",	logger.team_name);
+	np.getParam("team_name",		logger.team_name);
 
-	np.getParam("image_file",	logger.image_file);
-	np.getParam("pcd_file",		logger.pcd_file);
-	np.getParam("scan_topic_0",	logger.scan_topic_0);		// TO BE REPLICATED
-	np.getParam("scan_topic_1",	logger.scan_topic_1);		// TO BE REPLICATED
-	np.getParam("map_frame",	logger.map_frame);
-	np.getParam("base_frame",	logger.base_frame);
+	np.getParam("image_file",		logger.image_file);
+	np.getParam("pcd_file",			logger.pcd_file);
+	
+	np.getParam("scan_topic_0",		logger.scan_topic_0);		// TO BE REPLICATED
+	np.getParam("scan_topic_1",		logger.scan_topic_1);		// TO BE REPLICATED
+	
+	np.getParam("map_frame",		logger.map_frame);
+	np.getParam("base_frame",		logger.base_frame);
 	//if (logger.team_name!="")	logger.base_frame = "/"+logger.team_name+logger.base_frame;
+	
+	np.getParam("translation_x",	logger.translation_x);
+	np.getParam("translation_y",	logger.translation_y);
+	np.getParam("translation_z",	logger.translation_z);
 	
 	logger.topic_prefix = "/rockin/" + logger.team_name;
 	

@@ -13,20 +13,31 @@
 	<arg name="map_frame"		default="/map" />
 	<arg name="base_frame"		default="/roamfree" />
 	
+	<arg name="translation_x"	default="0.575" />
+	<arg name="translation_y"	default="0.221" />
+	<arg name="translation_z"	default="0.984" />
+	
 	<arg name="pcd_file" 		default="$(find rockin_logger)/data/example.pcd" />
 	<arg name="image_file" 		default="$(find rockin_logger)/data/example.png" />
 	<!-- END - CONFIGURE THE LOGGER BY FILLING THE VALUES OF YOUR ROBOT HERE -->
 	
 	
 	<node pkg="rockin_logger" name="rockin_logger" type="rockin_logger" output="screen">
-		<param name="pcd_file"		value="$(arg pcd_file)" />
-		<param name="image_file"	value="$(arg image_file)" />
 		
 		<param name="team_name"		value="$(arg team_name)" />
+		
 		<param name="scan_topic_0"	value="$(arg scan_topic_0)" />	<!-- TO BE REPLICATED FOR EACH LASER  -->
 		<param name="scan_topic_1"	value="$(arg scan_topic_1)" />	<!-- TO BE REPLICATED FOR EACH LASER  -->
+		
 		<param name="map_frame"		value="$(arg map_frame)" />
 		<param name="base_frame"	value="$(arg base_frame)" />
+		
+		<param name="translation_x"	value="$(arg translation_x)" />
+		<param name="translation_y"	value="$(arg translation_y)" />
+		<param name="translation_z"	value="$(arg translation_z)" />
+		
+		<param name="pcd_file"		value="$(arg pcd_file)" />
+		<param name="image_file"	value="$(arg image_file)" />
 	</node>
 	
 	<node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
