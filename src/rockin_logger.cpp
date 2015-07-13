@@ -148,19 +148,33 @@ bool getRobotPose(double &x, double &y, double &th_rad){
 void loggerTimerCallback(const ros::TimerEvent& msg){
 	// ROS_INFO("Publishing info...");
 	logger.now = ros::Time::now();
-	double x,y,th_rad;
-	geometry_msgs::PoseStamped rpose,mpose;
-
+	double x, y, th_rad;
+	geometry_msgs::PoseStamped rpose, mpose;
 	bool r = getRobotPose(x, y, th_rad);
+	
 	if (r){
 		rpose.header.stamp = logger.now;
 		rpose.header.frame_id = logger.map_frame;
-		rpose.pose.position.x = x; rpose.pose.position.y = y; rpose.pose.position.z = 0;
-		tf::Quaternion q; q.setRPY(0, 0, th_rad);
+		tf::Quaternion q;
+		
+		// robot position and orientation
+		rpose.pose.position.x = x;
+		rpose.pose.position.y = y;
+		rpose.pose.position.z = 0;		
+		q.setRPY(0, 0, th_rad);
+		
+		// publish robot pose
 		tf::quaternionTFToMsg(q, rpose.pose.orientation);
 		logger.rposePub.publish(rpose);
-		mpose = rpose; mpose.pose.position.z += 1.0;
-		q.setRPY(0.3, -0.7, th_rad);		//TODO: replace magic numbers with parameters from launch file
+		
+		// marker position and orientation
+		mpose = rpose;
+		mpose.pose.position.x += 0.575;
+		mpose.pose.position.y += 0.221;
+		mpose.pose.position.z += 0.984;
+		q.setRPY(0, 0, th_rad);				// the marker's direction is the same as the robot
+		
+		// publish marker pose
 		tf::quaternionTFToMsg(q, mpose.pose.orientation);
 		logger.mposePub.publish(mpose);
 	}
