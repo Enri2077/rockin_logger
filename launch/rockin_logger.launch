@@ -19,7 +19,7 @@
 		<param name="pcd_file"		value="$(arg pcd_file)" />
 		<param name="image_file"	value="$(arg image_file)" />
 		
-		<param name="robot_name"	value="$(arg robot_name)" />
+		<param name="team_name"		value="$(arg team_name)" />
 		<param name="scan_topic_0"	value="$(arg scan_topic_0)" />
 		<param name="map_frame"		value="$(arg map_frame)" />
 		<param name="base_frame"	value="$(arg base_frame)" />
