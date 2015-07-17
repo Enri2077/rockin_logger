@@ -42,7 +42,7 @@
 	
 	<node name="audio_capture" pkg="audio_capture" type="audio_capture" output="screen">
 		<param name="bitrate" value="128"/>
-		<remap from="audio" to="/rockin/audio"/>
+		<remap from="audio" to="/rockin/$(arg team_name)/audio"/>
 	</node>
 	
 	<node	pkg="tf" type="static_transform_publisher"
