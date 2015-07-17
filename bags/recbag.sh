@@ -12,7 +12,7 @@ if [ -n "$2" ]; then
   BENCHMARK="$2"
 fi
 
-DATE=`date +%Y%m%d%k%M`
+DATE=`date +%0Y%0m%0d%0k%0M`
 
 xterm -e "roslaunch rockin_logger rockin_logger.launch" &
 
