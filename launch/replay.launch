@@ -15,7 +15,7 @@
 
     <node name="audio_play" pkg="audio_play" type="audio_play" output="screen">
       <param name="dst" value="alsasink"/>
-      <remap from="audio" to="/rockin/audio"/>
+      <remap from="audio" to="/rockin/audio"/> <!-- insert teamname -->
     </node>
   
     <!-- Start rziz -->
