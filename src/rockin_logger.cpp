@@ -223,6 +223,7 @@ int main(int argc, char **argv){
 	np.getParam("translation_z",	logger.translation_z);
 	
 	logger.topic_prefix = "/rockin/" + logger.team_name;
+	//logger.topic_prefix = "/rockin"; // to name the topics /rockin/TOPIC_NAME, instead of /rockin/TEAM_NAME/TOPIC_NAME
 	
 	logger.init(n);
 	ros::spin();
