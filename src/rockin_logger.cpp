@@ -14,7 +14,7 @@
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-// #include <pcl_conversions/pcl_conversions.h> // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+#include <pcl_conversions/pcl_conversions.h>
 
 using namespace std;
 
@@ -43,8 +43,8 @@ struct TLogger{
 	image_transport::ImageTransport	*imagetr;
 	cv::Mat image;
 
-	// pcl::PCLPointCloud2 pointcloud; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
-	// sensor_msgs::PointCloud2 pointcloud_msg; // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+	pcl::PCLPointCloud2 pointcloud;
+	sensor_msgs::PointCloud2 pointcloud_msg;
 
 	/**	Parameters provided by launch file,
 	  *	the only customization here should be the replication for the topics 
@@ -93,7 +93,7 @@ struct TLogger{
 		mposePub = n.advertise<geometry_msgs::PoseStamped>(topic_prefix+ROCKIN_MARKERPOSE, 10);
 		imagePub = imagetr->advertise(topic_prefix+ROCKIN_IMAGE, 1);
 		commandPub = n.advertise<std_msgs::String>(topic_prefix+ROCKIN_COMMAND, 1);
-		// pointcloudPub = n.advertise<pcl::PCLPointCloud2> (topic_prefix+ROCKIN_POINTCLOUD, 1); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+		pointcloudPub = n.advertise<pcl::PCLPointCloud2> (topic_prefix+ROCKIN_POINTCLOUD, 1);
 		
 		logger_timer = n.createTimer(ros::Duration(0.1), loggerTimerCallback);  // 10 Hz
 		image_timer = n.createTimer(ros::Duration(5.0), imageTimerCallback);    // 1/5 Hz
@@ -109,8 +109,8 @@ struct TLogger{
 		cv::circle(image, cv::Point(120, 160), 80, CV_RGB(0,0,255)); */
 		image = cv::imread(image_file, CV_LOAD_IMAGE_COLOR);
 
-		// pcl::io::loadPCDFile (pcd_file, pointcloud); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
-		// pointcloud.header.frame_id = base_frame; // In general it should be in camera frame  // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+		pcl::io::loadPCDFile (pcd_file, pointcloud);
+		pointcloud.header.frame_id = base_frame; // In general it should be in camera frame
 	}
 	
 };
@@ -192,8 +192,8 @@ void imageTimerCallback(const ros::TimerEvent& msg){
 	logger.imagePub.publish(image_msg);
 
 
-	// logger.pointcloud.header.stamp =  pcl_conversions::toPCL(logger.now); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
-	// logger.pointcloudPub.publish(logger.pointcloud); // Enrico: I commented this line because pcl_conversions.h is not available in groovy
+	logger.pointcloud.header.stamp =  pcl_conversions::toPCL(logger.now);
+	logger.pointcloudPub.publish(logger.pointcloud);
 }
 
 // Command logger
@@ -217,7 +217,6 @@ int main(int argc, char **argv){
 	
 	np.getParam("map_frame",		logger.map_frame);
 	np.getParam("base_frame",		logger.base_frame);
-	//if (logger.team_name!="")	logger.base_frame = "/"+logger.team_name+logger.base_frame;
 	
 	np.getParam("translation_x",	logger.translation_x);
 	np.getParam("translation_y",	logger.translation_y);
