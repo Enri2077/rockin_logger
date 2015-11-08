@@ -1,6 +1,7 @@
 =========================================
             rockin_logger
 Luca Iocchi 2015 (iocchi@dis.uniroma1.it)
+Enrico Piazza 2015
 =========================================
 
 
@@ -13,7 +14,11 @@ You must adapt this code for your robot.
 Configuring, logging and testing audio acquisition
 ==================================================
 
-1. Installation
+1. Configuration
+
+Configure the package by filling the values of the arguments in rockin_logger/launch/rockin_logger.launch and fill teamname, benchmark, etc in rockin_logger/bags/recbag.sh, rockin_logger/bags/playbag.sh and rockin_logger/launch/replay.launch
+
+2. Installation
 
 First, you probably have to install some packages
 
@@ -21,12 +26,10 @@ First, you probably have to install some packages
   sudo apt-get install gstreamer0.10-tools
   sudo apt-get install gstreamer0.10-alsa
 
-2. Check audio settings
+3. Check audio settings
 
 Check that the audio settings in the PC where the microphone is connected are properly set.
 An easy way is to use 'audacity' program to record and play something.
-
-
 
 Testing on stage
 ================
@@ -37,6 +40,8 @@ In order to test the logging/playing function on Stage simulator, download the '
 Select peccioli@Home/@Work, sapienzbot, amcl, move_base, RViz and click the Start button.
 
 2. Record a bag 
+
+Configure the launcher rockin_logger.launch by filling the values
 
   $ cd to rockin_logger/bags 
   $ ./recbag.sh <teamname> <benchmark>
